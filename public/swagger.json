@@ -1,0 +1,592 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"infer_typeofcreateEventDto_": {
+				"properties": {
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalTickets": {
+						"type": "number",
+						"format": "double"
+					},
+					"date": {
+						"type": "string"
+					},
+					"location": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"price",
+					"totalTickets",
+					"date",
+					"location",
+					"description",
+					"title"
+				],
+				"type": "object"
+			},
+			"CreateEventDto": {
+				"$ref": "#/components/schemas/infer_typeofcreateEventDto_"
+			},
+			"infer_typeofupdateEventDto_": {
+				"properties": {
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalTickets": {
+						"type": "number",
+						"format": "double"
+					},
+					"date": {
+						"type": "string"
+					},
+					"location": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"UpdateEventDto": {
+				"$ref": "#/components/schemas/infer_typeofupdateEventDto_"
+			},
+			"infer_typeofcreateBookingDto_": {
+				"properties": {
+					"numberOfTickets": {
+						"type": "number",
+						"format": "double"
+					},
+					"eventId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"numberOfTickets",
+					"eventId"
+				],
+				"type": "object"
+			},
+			"CreateBookingDto": {
+				"$ref": "#/components/schemas/infer_typeofcreateBookingDto_"
+			},
+			"infer_typeofregisterDto_": {
+				"properties": {
+					"role": {
+						"type": "string",
+						"enum": [
+							"ORGANIZER",
+							"CUSTOMER"
+						]
+					},
+					"name": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"role",
+					"name",
+					"password",
+					"email"
+				],
+				"type": "object"
+			},
+			"RegisterDto": {
+				"$ref": "#/components/schemas/infer_typeofregisterDto_"
+			},
+			"infer_typeofloginDto_": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"email"
+				],
+				"type": "object"
+			},
+			"LoginDto": {
+				"$ref": "#/components/schemas/infer_typeofloginDto_"
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	},
+	"info": {
+		"title": "event-booking-system",
+		"version": "1.0.0",
+		"description": "Event Booking System - Backend API with role-based access control and background tasks",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/api/events": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Event created successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden (Organizer only)"
+					}
+				},
+				"description": "Organizer only — Create a new event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ORGANIZER"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateEventDto"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Events retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Any authenticated user — List all events (optional ?search=keyword)",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/events/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Event retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"404": {
+						"description": "Event not found"
+					}
+				},
+				"description": "Any authenticated user — Get event details",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Event updated successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden (Owner only)"
+					},
+					"404": {
+						"description": "Event not found"
+					}
+				},
+				"description": "Organizer only (owner) — Update event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ORGANIZER"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateEventDto"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Event deleted successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden (Owner only)"
+					},
+					"404": {
+						"description": "Event not found"
+					}
+				},
+				"description": "Organizer only (owner) — Delete event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ORGANIZER"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/bookings": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Booking created successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"400": {
+						"description": "Not enough tickets available"
+					},
+					"404": {
+						"description": "Event not found"
+					}
+				},
+				"description": "Customer only — Book tickets for an event",
+				"tags": [
+					"Bookings"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CUSTOMER"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateBookingDto"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Bookings retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Customer only — List my bookings",
+				"tags": [
+					"Bookings"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CUSTOMER"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/api/bookings/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Booking retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden (Owner only)"
+					},
+					"404": {
+						"description": "Booking not found"
+					}
+				},
+				"description": "Customer only — Get booking details (must own the booking)",
+				"tags": [
+					"Bookings"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CUSTOMER"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "Cancel",
+				"responses": {
+					"200": {
+						"description": "Booking cancelled successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"400": {
+						"description": "Booking is already cancelled"
+					},
+					"403": {
+						"description": "Forbidden (Owner only)"
+					},
+					"404": {
+						"description": "Booking not found"
+					}
+				},
+				"description": "Customer only — Cancel a booking (restores tickets)",
+				"tags": [
+					"Bookings"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CUSTOMER"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"201": {
+						"description": "User registered successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error"
+					},
+					"409": {
+						"description": "User already exists"
+					}
+				},
+				"description": "Register a new user (organizer or customer)",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Login successful",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation error"
+					},
+					"401": {
+						"description": "Invalid email or password"
+					}
+				},
+				"description": "Login and receive a JWT token",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginDto"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
